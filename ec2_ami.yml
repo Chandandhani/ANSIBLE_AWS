@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: Create an ami 
+      ec2_ami:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        instance_id: "i-059740fafc3981df9"
+        name: mynewami_ansible
+        wait: yes
+        state: present
+

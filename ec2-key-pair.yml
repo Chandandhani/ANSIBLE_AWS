@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: create a key-pair
+      ec2_key:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        name: my-keypair
+        state: present
+      register: keypair
+
+    - name: display key-pair
+      debug: 
+        var: keypair
+       
+    - name: store the new key-pair in our local system
+      lineinfile:
+        path: /home/ansible/project/my-keypair.pem
+        line: "{{ keypair.key.private_key }}"
+        mode: 0600
+        create: yes
+

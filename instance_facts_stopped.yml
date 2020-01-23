@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: false
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: gathering facts of ec2-instances
+      ec2_instance_info:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        filters:
+          instance-state-name: stopped  
+      register: ec2_facts
+    - debug:
+        var: ec2_facts

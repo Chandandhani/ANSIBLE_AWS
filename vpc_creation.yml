@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: create VPC
+      ec2_vpc_net:
+        name: "{{ VPC_NAME }}"
+        cidr_block: "{{ VPC_CIDR }}"
+        region: "{{ AWS_REGION }}"
+        state: present
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+      register: vpc 

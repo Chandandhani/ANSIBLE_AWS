@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: change ec2-instance state 
+      ec2:
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        ec2_region: "{{ AWS_REGION }}"
+        state: running
+        wait: yes
+        instance_tags:
+          Name: Demo-ec2
+      register: ec2_facts
+    - name: output ip addresses of instances
+      debug:
+        msg: "IPADDRESS: {{ item.public_ip }}"
+      loop: "{{ ec2_facts.instances }}"
+    - name: add hosts to inventory
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: demogroup
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+        ansible_ssh_private_key_file: /home/ansible/project/pandakey.pem
+      loop: '{{ ec2_facts.instances }}'
+- hosts: demogroup
+  gather_facts: no
+  remote_user: centos
+  tasks: 
+    - name: wait for ssh to come up
+      wait_for_connection: 
+        delay: 5
+        timeout: 30
+    - name: collect instance  facts
+      ec2_metadata_facts:
+      register: output
+    - name: debuging output
+      debug:
+        msg: "this is a t2.micro instance"
+      when: ansible_ec2_instance_type == "t2.micro"
+#- hosts: localhost
+#  become: true
+#  gather_facts: no
+#  vars_files:
+#    - keys.yml
+#  tasks:
+#    - name: checkout gatherd facts
+#      debug:
+#        var:  hostvars[groups['demogroup'][0]]['ansible_ec2_instance_id'] 
+

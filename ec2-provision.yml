@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: create Demo Eci2
+      ec2:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        instance_type: t2.micro
+        keypair: my-keypair
+        image: ami-0036ab7a
+        assign_public_ip: yes
+        vpc_subnet_id: subnet-0966688ec9f5fcf35
+        group: Demo-Sg
+        wait: true
+        exact_count: 1
+        count_tag:
+          Name: Demo-ec2-centos7
+        instance_tags:
+          Name: Demo-ec2-centos7
+      register: ec2
+     
+    - name: debug output
+      debug:  
+        var: ec2
+    
+    - name: add host to inventory
+      add_host: 
+        hostname: "{{ item.public_ip }}"
+        groupname: demogroup
+        ansible_ssh_private_key_file: /home/ansible/project/my-keypair.pem
+      loop: "{{ ec2.tagged_instances }}"
+- hosts: demogroup
+  remote_user: ansible
+  become: true
+  tasks:
+    - name: wait for ssh
+      wait_for_connection: 
+        delay: 5
+        timeout: 60
+    - name: check host status
+      ping:

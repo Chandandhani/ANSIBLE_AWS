@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: create a vpc
+      ec2_vpc_net:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        name: vpc_ansible
+        cidr_block: 192.168.0.0/24
+        tags:
+          Name: Demo
+        tenancy: default

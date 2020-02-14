@@ -1,0 +1,9 @@
+---
+- hosts: master
+  become: true
+  remote_user: ansible
+  gather_facts: no
+  tasks:
+    - name: 
+      script: /home/ansible/project/script_user.sh 
+       

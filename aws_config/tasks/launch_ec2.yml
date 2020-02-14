@@ -1,0 +1,30 @@
+- name: create a new ec2 key pair
+  ec2_key:
+    aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+    aws_secret_key: "{{ AWS_SECRET_KEY }}"
+    name: "{{ keypair_name }}"
+    ec2_region: "{{ aws_region }}"
+  register: keypairs
+
+- name: store the new key-pair in our local system
+  lineinfile:
+    path: '/home/ansible/project/"{{ keypair_name }}.pem" '
+    line: "{{ keypairs.key.private_key }}"
+    mode: 0600
+    create: yes
+
+- name: Create EC2 server
+  ec2:
+    image: ami-0199893068f89a449
+    wait: yes
+    instance_type: t2.micro
+    group_id: "{{ security_group.group_id }}"
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    key_name: "{{ keypairs.key.name  }}"
+    count_tag:
+      Name: "{{ ec2_tag }}"
+    exact_count: 1
+    aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+    aws_secret_key: "{{ AWS_SECRET_KEY }}"
+    ec2_region: "{{ aws_region }}"
+  register: ec2_out

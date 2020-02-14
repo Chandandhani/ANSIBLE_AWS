@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  become: true
+  remote_user: root
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: ceating IAM user
+      iam:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        iam_type: user
+        state: present
+        name: demouser
+        password: redhat@123
+    - name: create a new group with poicy and add user
+      iam_group:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        name: iamtest_group
+        managed_policy:
+          - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
+        user: demouser
+        state: present 

@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: create a s3 bucket
+      aws_s3:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        bucket: la-s3bukansibledd
+        mode: create
+        region: "{{ AWS_REGION }}"
+        permission: public-read
+
+    - name: addobjects to s3
+      aws_s3:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        bucket: la-s3bukansibledd
+        mode: put
+        object: script_user.sh
+        src: /home/ansible/project/script_user.sh
+      

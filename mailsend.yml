@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+    - name: sending mail by ansible
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: buntyaws@gmail.com
+        password: redhat@123456
+        to: Manoj <tripathy110@gmail.com>
+        subject: ansible
+        body: INDIA WON THE 1ST T20

@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  become: true
+  vars_files:
+    - keys.yml
+  tasks:
+    - name: gather tags
+      ec2_tag:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        state: list
+        resource: i-0b191d99aa26b6954
+      register: tags
+
+    - name: debug output
+      debug:
+        var: tags
+
+    - name: tags of snapshots of volume
+      ec2_tag:
+        aws_access_key: "{{ AWS_KEY_ACCESS_ID }}"
+        aws_secret_key: "{{ AWS_SECRET_KEY }}"
+        ec2_region: "{{ AWS_REGION }}"
+        resource: snap-0916c7c8d929ffc6b
+        tags:
+          system: erp
+          version: 1.2
+        state: present
+          
+

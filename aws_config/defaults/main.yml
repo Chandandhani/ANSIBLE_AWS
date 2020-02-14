@@ -1,0 +1,22 @@
+---
+# defaults file for aws_config
+AWS_KEY_ACCESS_ID: "AKIAXEBM3TROV5XCJR7T"
+AWS_SECRET_KEY: "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"
+aws_region: "us-east-1"
+
+# VPC SECTION
+vpc_cidr: 10.10.0.0/24
+vpc_name: "Ansible_VPC"
+
+# Subnet & IGW
+subnet_name: "Ansible_Subnet"
+subnet_cidr: 10.10.0.0/28
+igw_name: "Ansible_IGW"
+securitygroup_name: "Ansible_SGroup"
+ec2_tag: "ansible_Server"
+route_name: "Ansible_RT"
+
+#KEY-PAIRS
+ec2_key_directory: "/home/ansible/project/"
+keypair_name: "ansible_key"
+
